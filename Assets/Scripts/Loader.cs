@@ -2,6 +2,9 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Holds the instances for the OptionsController and the GameController classes.
+/// </summary>
 public class Loader : MonoBehaviour {
 
 	public GameObject optionsController;

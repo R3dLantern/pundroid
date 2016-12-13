@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Handles player movement and controls
+/// </summary>
 public class PlayerController : MonoBehaviour {
 
 	public float speed;
@@ -32,7 +35,9 @@ public class PlayerController : MonoBehaviour {
 
 	bool enteredViewport = false;
 
-
+    /// <summary>
+    /// Gather several objects necessary for a clean Start()
+    /// </summary>
 	void Awake(){
 		turret = GameObject.Find ("Controller").GetComponent<Transform> ();
 		hb = GameObject.FindWithTag ("HealthBar").GetComponent<HealthBarManager> ();
@@ -95,12 +100,19 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
+    /// <summary>
+    /// [WIP] possibly needed for the intro sequence
+    /// </summary>
 	void OnBecameVisible() {
 		enteredViewport = true;
 	}
 
+    /// <summary>
+    /// Execute the firing of a projectile in the direction of the mouse cursor
+    /// </summary>
 	void PlayerFire() {
 		nextFire = Time.time + fireRate;
+        // if the CrossShot PowerUp is picked up, the ship fires 4 projectiles in all directions
 		if (crossShotPickedUp) {
 			for (int i = 0; i < CrossShots.Length; i++) {
 				Instantiate (shot, CrossShots [i].position, CrossShots [i].rotation);
@@ -117,6 +129,10 @@ public class PlayerController : MonoBehaviour {
 		op.Fire();
 	}
 
+    /// <summary>
+    /// PowerUp AutoAttack rapidly and consecutively fires 30 projectiles in the direction of the mouse cursor.
+    /// Does not stack up the PowerUp spawn counter.
+    /// </summary>
 	IEnumerator AutoAttack() {
 		autoAttackActive = true;
 		Instantiate (shot, shotSpawn.position, shotSpawn.rotation);
@@ -130,6 +146,9 @@ public class PlayerController : MonoBehaviour {
 		op.WearDown ();
 	}
 
+    /// <summary>
+    /// PowerUp Shield raises an indestructible shield for 30 seconds.
+    /// </summary>
 	IEnumerator Shield() {
 		shield.gameObject.SetActive(true);
 		for (int i = 0; i < shieldTicks - 1; i++) {
@@ -139,18 +158,30 @@ public class PlayerController : MonoBehaviour {
 		op.WearDown ();
 	}
 
-	public void ActivateAutoAttack() {
+    /// <summary>
+    /// Activate the AutoAttack PowerUp
+    /// </summary>
+    public void ActivateAutoAttack() {
 		StartCoroutine ("AutoAttack");
 	}
 
+    /// <summary>
+    /// Heal 1 HP of the player with a Heal PowerUp
+    /// </summary>
 	public void Heal() {
 		hb.IncreaseHealth ();
 	}
 
+    /// <summary>
+    /// Activate the CrossShot PowerUp
+    /// </summary>
 	public void CrossShot() {
 		crossShotPickedUp = true;
 	}
 
+    /// <summary>
+    /// Activate the shield PowerUp
+    /// </summary>
 	public void ActivateShield() {
 		StartCoroutine ("Shield");
 	}

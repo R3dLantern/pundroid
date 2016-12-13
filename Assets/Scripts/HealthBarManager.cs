@@ -2,6 +2,9 @@
 using UnityEngine.UI;
 using System.Collections;
 
+/// <summary>
+/// Manages the player health and the UI health bar
+/// </summary>
 public class HealthBarManager : MonoBehaviour {
 
 	public GameObject[] healthblocks;
@@ -20,6 +23,4 @@ public class HealthBarManager : MonoBehaviour {
 	public int GetPlayerHealth() {
 		return playerHealth;
 	}
-
-
 }

@@ -57,7 +57,19 @@ public class _ROADMAP: MonoBehaviour{
  * 8. Bugfixing
  * 8.1. Spawnkollision!!!!!!!!
  * 
+ * D: SERIOUS BUSINESS
  * 
+ * 9. Code
+ * 9.1 Ausführliche Dokumenation
+ * 9.2 Stellenweise Code-Optimierungen
+ * 9.3 Vorbereitung auf neue Features
+ * 10. Design
+ * 10.1 Styleguide
+ * 10.2 Designprinzipien
+ * 11. Projekt
+ * 11.1 Ziele
+ * 11.2 Schritte
+ * 11.3 Ausblick
  **/
 
 }

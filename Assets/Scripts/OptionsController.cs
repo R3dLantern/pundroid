@@ -7,7 +7,6 @@ using System.Collections;
 /// <summary>
 /// Handles ingame options, such as Volume and SoundFX-management.
 /// </summary>
-
 public class OptionsController : MonoBehaviour {
 
 	public static OptionsController instance = null;
@@ -70,12 +69,15 @@ public class OptionsController : MonoBehaviour {
 			menuSlider.value = PlayerPrefs.GetInt ("menu");
 			gameSlider.value = PlayerPrefs.GetInt ("game");
 		}
+
+        SceneManager.activeSceneChanged += OnSceneChange;
+
 	}
 
-	void OnLevelWasLoaded(int level){
-
-		checkMusic ();
-		if (level < 2) {
+	void OnSceneChange(Scene last, Scene now)
+    {
+        checkMusic ();
+		if (SceneManager.GetActiveScene().buildIndex < 2) {
 			muteToggle = GameObject.FindWithTag ("volume_mute").GetComponent<Toggle> ();
 			mSlider = GameObject.FindWithTag ("volume_master").GetComponent<Slider> ();
 			sfxSlider = GameObject.FindWithTag ("volume_sfx").GetComponent<Slider> ();
@@ -319,7 +321,8 @@ public class OptionsController : MonoBehaviour {
 			if (menuMusic.isPlaying)
 				menuMusic.Stop ();
 			if (!bgMusic.isPlaying) {
-				StartCoroutine (PlayMusicAfterCountdown());
+                bgMusic.Play();
+				// StartCoroutine (PlayMusicAfterCountdown());
 			} else return;
 			break;
 		case 2:
@@ -333,10 +336,11 @@ public class OptionsController : MonoBehaviour {
 		}
 	}
 
-	public IEnumerator PlayMusicAfterCountdown() {
+    /*
+    public IEnumerator PlayMusicAfterCountdown() {
 		while (!ui.countdownFinished) {
 			yield return null;
 		}
 		bgMusic.Play ();
-	}
+	}*/
 }

@@ -1,7 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// [WIP] Controller class for enemy ships
+/// </summary>
 public class EnemyShipController : MonoBehaviour {
+    // TODO: implement evasion logic and pathfinding AI
 
 	public float speed = 0.1f;
 

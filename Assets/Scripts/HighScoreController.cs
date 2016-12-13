@@ -3,6 +3,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
 
+/// <summary>
+/// Manages the scoreboard and player-based scores made in the game
+/// </summary>
 public class HighScoreController : MonoBehaviour {
 
 	public Text[] names;

@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+
 /// <summary>
 /// The GameController handles all backend mechanisms happening in the game scene.
 /// </summary>
@@ -38,7 +39,7 @@ public class GameController : MonoBehaviour {
 	/// Awake this instance and find the UI texts.
 	/// </summary>
 	void Awake(){
-		//Singleton pattern
+		// Only one GameController instance at a time
 		if (instance == null)
 			instance = this;
 		else if (instance != this)
