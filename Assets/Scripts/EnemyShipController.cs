@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 /// <summary>
 /// [WIP] Controller class for enemy ships
 /// </summary>
-public class EnemyShipController : MonoBehaviour {
+public class EnemyShipController : Spawnable {
     // TODO: implement evasion logic and pathfinding AI
 
-	public float speed = 0.1f;
+    public int scoreValue;
+
+    public GameObject explosion;
+    public GameObject playerExplosion;
+    public PowerUp[] powerUps;
 
 	public float fireRate;
 	public GameObject shot;
@@ -17,12 +22,8 @@ public class EnemyShipController : MonoBehaviour {
 
 	Camera cam;
 	Transform turret;
-
-	public float leftConstraint = 0.0f;
-	public float rightConstraint = 0.0f;
-	public float topConstraint = 0.0f;
-	public float bottomConstraint = 0.0f;
-	public float buffer = 0.1f;
+    GameController gc;
+    HealthBarManager hb;
 
 	float distanceZ;
 
@@ -30,45 +31,85 @@ public class EnemyShipController : MonoBehaviour {
 		turret = GameObject.Find ("Controller").GetComponent<Transform> ();
 	}
 
-	// Use this for initialization
-	void Start () {
-		cam = Camera.main;
-		distanceZ = Mathf.Abs (cam.transform.position.z + transform.position.z);
-	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
-		float rndVal = Random.value - 0.5f * 7f * speed;
-		Vector3 rnd = new Vector3 (
-			rndVal,
-			rndVal,
-			0
-		);
+    public override void IndividualStartConfiguration()
+    {
+        gc = GameObject.FindWithTag("GameController").GetComponent<GameController>();
+        if (gc == null)
+            Debug.LogError("GameController not found");
+        hb = GameObject.FindWithTag("HealthBar").GetComponent<HealthBarManager>();
+        if (hb == null)
+            Debug.LogError("HealthBarManager not found");
+    }
 
-		transform.position = Vector3.Lerp(	
-			transform.position,
-			transform.position + rnd,
-			Time.time
-		);
+    public override void OnTriggerEnter2D(Collider2D other)
+    {
+        switch(other.tag)
+        {
+            case "enemy":
+            case "powerUp":
+                break;
+            case "projectile":
+                HandleDestruction(other, scoreValue);
+                break;
+            case "Player":
+                HandleDestruction(other);
+                break;
+        }
+        return;
+    }
 
-		//This is a very poor implementation of wrapping the map, and needs improvement...
-		if (transform.position.x < leftConstraint - buffer) {
-			transform.position = new Vector3 (rightConstraint + buffer, transform.position.y, transform.position.z);
-		}
-		if (transform.position.x > rightConstraint + buffer) {
-			transform.position = new Vector3 (leftConstraint - buffer, transform.position.y, transform.position.z);
-		}
-		if (transform.position.y < bottomConstraint - buffer) {
-			transform.position = new Vector3 (transform.position.x, topConstraint + buffer, transform.position.z);
-		}
-		if (transform.position.y > topConstraint + buffer) {
-			transform.position = new Vector3 (transform.position.x, bottomConstraint - buffer, transform.position.z);
-		}
-	}
-
-	void Fire()
+    void Fire()
 	{
 		nextFire = Time.time + fireRate;
 	}
+
+    void HandleDestruction(Collider2D other, int scoreValue = 0)
+    {
+        if (other.tag == "Player")
+        {
+            if (!gc.playerIsHit)
+            {
+                if (hb.GetPlayerHealth() == 0)
+                {
+                    DestroyImmediate(other.gameObject);
+                    GameObject exp_clone = (GameObject)Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
+                    Destroy(exp_clone, 0.5f);
+                    gc.PlayerHit();
+                    gc.GameOver();
+                }
+                else
+                {
+                    gc.PlayerHit();
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
+        else
+        {
+            DestroyImmediate(other.gameObject);
+            gc.AddScore(scoreValue);
+        }
+        if(explosion != null)
+        {
+            GameObject exp_clone2 = (GameObject)Instantiate(explosion, transform.position, transform.rotation);
+        }
+        DestroyImmediate(this.gameObject);
+        op.Explosion();
+        gc.hazardCount--;
+
+        if(!pc.autoAttackActive && !pc.crossShotPickedUp)
+        {
+            gc.pUpCount++;
+        }
+        if(gc.pUpCount == 15)
+        {
+            Instantiate(powerUps[UnityEngine.Random.Range(0, powerUps.Length - 1)], transform.position, transform.rotation);
+            gc.pUpCount = 0;
+        }
+    }
+
+
 }
