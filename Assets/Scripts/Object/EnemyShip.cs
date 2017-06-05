@@ -18,23 +18,20 @@ public class EnemyShip : Spawnable
 	public GameObject shot;
 	public Transform shotSpawn;
 
-	float nextFire;
+	//float nextFire;
 
 	Camera cam;
-	Transform turret;
-    GameController gc;
-    HealthbarController hb;
+	//Transform turret;
+    GameController gameController;
 
 	float distanceZ;
 
-	void Awake() { turret = GameObject.Find("Controller").GetComponent<Transform>(); }
+	//void Awake() { turret = GameObject.Find("Controller").GetComponent<Transform>(); }
 
     public override void IndividualStartConfiguration()
     {
-        gc = GameObject.FindWithTag("GameController").GetComponent<GameController>();
-        if (gc == null) { Debug.LogError("GameController not found"); }
-        hb = GameObject.FindWithTag("HealthBar").GetComponent<HealthbarController>();
-        if (hb == null) { Debug.LogError("HealthbarController not found"); }
+        gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
+        if (gameController == null) { Debug.LogError("GameController not found"); }
     }
 
     public override void OnTriggerEnter2D(Collider2D other)
@@ -54,41 +51,45 @@ public class EnemyShip : Spawnable
         return;
     }
 
-    void Fire() { nextFire = Time.time + fireRate; }
+    //void Fire() { nextFire = Time.time + fireRate; }
 
     void HandleDestruction(Collider2D other, int scoreValue = 0)
     {
         if (other.tag == "Player")
         {
-            if (!gc.playerIsHit)
+            if (!player.IsOnHitCooldown())
             {
-                if (hb.GetPlayerHealth() == 0)
+                if (player.GetCurrentHealth() == 0)
                 {
                     DestroyImmediate(other.gameObject);
                     GameObject exp_clone = Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
                     Destroy(exp_clone, 0.5f);
-                    gc.PlayerHit();
-                    gc.GameOver();
+                    player.TakeDamage();
+                    gameController.GameOver();
                 }
-                else { gc.PlayerHit(); }
+                else { player.TakeDamage(); }
             }
             else { return; }
         }
         else
         {
             DestroyImmediate(other.gameObject);
-            gc.AddScore(scoreValue);
+            gameController.AddScore(scoreValue);
         }
-        if(explosion != null) { GameObject exp_clone2 = Instantiate(explosion, transform.position, transform.rotation); }
+        if (explosion != null)
+        {
+            GameObject exp_clone = (GameObject)Instantiate(explosion, transform.position, transform.rotation);
+            Destroy(exp_clone, 0.5f);
+        }
         DestroyImmediate(gameObject);
         soundController.Explosion();
-        gc.hazardCount--;
+        gameController.hazardCount--;
 
-        if(!playerController.autoAttackActive && !playerController.crossShotPickedUp) { gc.pUpCount++; }
-        if(gc.pUpCount == 15)
+        if(!player.autoAttackActive && !player.crossShotPickedUp) { gameController.pUpCount++; }
+        if(gameController.pUpCount == 15)
         {
             Instantiate(powerUps[UnityEngine.Random.Range(0, powerUps.Length - 1)], transform.position, transform.rotation);
-            gc.pUpCount = 0;
+            gameController.pUpCount = 0;
         }
     }
 }

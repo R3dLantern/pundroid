@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Abstract class for all Spawnable ingame objects.
@@ -25,7 +23,7 @@ public abstract class Spawnable : MonoBehaviour
     Camera cam;
     Rigidbody2D rb;
 
-    protected PlayerController playerController;
+    protected Player player;
     protected SoundController soundController;
 
     /// <summary>
@@ -40,8 +38,8 @@ public abstract class Spawnable : MonoBehaviour
 
         soundController = GameObject.FindWithTag("SoundController").GetComponent<SoundController>();
         if (soundController == null) { Debug.Log("SoundController nicht gefunden!"); }
-        playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-        if (playerController == null) { Debug.Log("PlayerController nicht gefunden!"); }
+        player = GameObject.FindWithTag("Player").GetComponent<Player>();
+        if (player == null) { Debug.Log("Player nicht gefunden!"); }
 
         IndividualStartConfiguration();
 

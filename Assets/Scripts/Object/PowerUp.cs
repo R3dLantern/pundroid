@@ -30,19 +30,19 @@ public class PowerUp : Spawnable
 		switch (powerUpType)
         {
 		    case 0:
-			    playerController.ActivateAutoAttack();
+			    player.ActivateAutoAttack();
 			    soundController.AnnounceRapidshot();
 			    break;
 		    case 1:
-			    playerController.Heal();
+			    player.Heal();
 			    soundController.AnnounceHeal();
 			    break;
 		    case 2:
-			    playerController.CrossShot();
+			    player.ActivateCrossShot();
 			    soundController.AnnounceCrossfire();
 			    break;
 		    case 3:
-			    playerController.ActivateShield();
+			    player.ActivateShield();
 			    soundController.AnnounceShield();
 			    break;
 		}

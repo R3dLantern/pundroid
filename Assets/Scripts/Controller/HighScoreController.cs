@@ -46,7 +46,7 @@ public class HighScoreController : MonoBehaviour
     /// </summary>
     /// <param name="newScore">the new score to be checked against the current leaderboard</param>
     /// <returns>true, if new highscore has been set, else false</returns>
-    public bool newHighscore(int newScore)
+    public bool IsNewHighscore(int newScore)
     {
         // Score Zero requires no calculation
         if (newScore == 0) { return false; }

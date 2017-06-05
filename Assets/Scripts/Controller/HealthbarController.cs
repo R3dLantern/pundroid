@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
 
 /// <summary>
 /// Manages the player health and the UI health bar

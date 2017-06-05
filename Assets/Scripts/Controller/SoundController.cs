@@ -21,7 +21,7 @@ public class SoundController : MonoBehaviour
 	Toggle muteToggle;
 	Slider mSlider, sfxSlider, menuSlider, gameSlider;
 
-	UIController uiController;
+	//UIController uiController;
 
     /// <summary>
     /// Check for singleton status and assign UI elements and Controllers based on scene
@@ -40,10 +40,10 @@ public class SoundController : MonoBehaviour
 			menuSlider = GameObject.FindWithTag("volume_menu").GetComponent<Slider>();
 			gameSlider = GameObject.FindWithTag("volume_game").GetComponent<Slider>();
 		}
-		if (SceneManager.GetActiveScene ().buildIndex == 1)
+		/*if (SceneManager.GetActiveScene ().buildIndex == 1)
         {
 			uiController = GameObject.FindWithTag("SoundController").GetComponent<UIController>();
-		}
+		}*/
 	}
 
     /// <summary>

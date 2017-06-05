@@ -13,18 +13,13 @@ public class Asteroid: Spawnable {
 	public Asteroid[] smallerAsteroid;
 	public PowerUp[] powerUps;
 
-    GameController gc;
-	HealthbarController hb;
+    GameController gameController;
 
 	// Use this for initialization
 	public override void IndividualStartConfiguration () {
-		gc = GameObject.FindWithTag ("GameController").GetComponent<GameController> ();
-		if (gc == null) {
+		gameController = GameObject.FindWithTag ("GameController").GetComponent<GameController> ();
+		if (gameController == null) {
 			Debug.Log ("GameController nicht gefunden!");	
-		}
-		hb = GameObject.FindWithTag ("HealthBar").GetComponent<HealthbarController> ();
-		if (hb == null) {
-			Debug.Log ("HealthbarController nicht gefunden!");	
 		}
 	}
 
@@ -32,58 +27,62 @@ public class Asteroid: Spawnable {
     /// Handling the collision event with other objects
     /// </summary>
     /// <param name="other">The object colliding with this object</param>
-	public override void OnTriggerEnter2D(Collider2D other){
-
-        // PowerUps and other asteroids are ignored
-        if (other.tag == "Enemy" || other.tag == "powerUp")
+	public override void OnTriggerEnter2D(Collider2D other)
+    {
+        switch (other.tag)
         {
-            return;
+            // Ignore collision with other Asteroids and PowerUps
+            default:
+            case "Enemy":
+            case "powerUp":
+                return;
+            // Increase player score when hit by a projectile
+            case "projectile":
+                Destroy(other.gameObject);
+                gameController.AddScore(scoreValue);
+                break;
+            case "Player":
+                if (!player.IsOnHitCooldown())
+                {
+                    if (player.GetCurrentHealth() == 0)
+                    {
+                        GameObject exp_clone = (GameObject)Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
+                        Destroy(other.gameObject);
+                        Destroy(exp_clone, 0.5f);
+                        player.TakeDamage();
+                        gameController.GameOver();
+                    }
+                    else { player.TakeDamage(); }
+                }
+                else { return; }
+                break;
         }
-        // Projectiles are destroyed on collision
-		if (other.tag == "projectile") {
-			Destroy (other.gameObject);
-			gc.AddScore (scoreValue);
+		if (explosion != null)
+        {
+			GameObject exp_clone = Instantiate(explosion, transform.position, transform.rotation);
+			Destroy(exp_clone, 0.5f);
 		}
-
-        // Player collision handling
-		if (other.tag == "Player") {
-			if (!gc.playerIsHit) {
-				if (hb.GetPlayerHealth() == 0) {
-					GameObject exp_clone = (GameObject) Instantiate (playerExplosion, other.transform.position, other.transform.rotation);
-					Destroy (other.gameObject);
-					Destroy (exp_clone, 0.5f);
-					gc.PlayerHit ();
-					gc.GameOver ();
-				} else
-					gc.PlayerHit ();
-			} else
-				return;
-		}
-
-		if (explosion != null) {
-			GameObject exp_clone = (GameObject) Instantiate (explosion, transform.position, transform.rotation);
-			Destroy (exp_clone, 0.5f);
-		}
-		Destroy (gameObject);
-		soundController.Explosion ();
-		--gc.hazardCount;
+		Destroy(gameObject);
+		soundController.Explosion();
+		--gameController.hazardCount;
 
         // if no PowerUp is active, up the counter for the next spawn
-		if (!playerController.autoAttackActive && !playerController.crossShotPickedUp) {
-			gc.pUpCount++;
-		}
+		if (!player.autoAttackActive && !player.crossShotPickedUp) { gameController.pUpCount++; }
 
         // spawn a random PowerUp object after 15 destroyed asteroids
-		if (gc.pUpCount == 15) {
-			Instantiate (powerUps [Mathf.FloorToInt(Random.Range (0, powerUps.Length - 1))], transform.position, transform.rotation);
-			gc.pUpCount = 0;
+		if (gameController.pUpCount == 15)
+        {
+			Instantiate(powerUps[Mathf.FloorToInt(Random.Range (0, powerUps.Length - 1))], transform.position, transform.rotation);
+			gameController.pUpCount = 0;
 		}
 
         // Bigger asteroids spawn smaller asteroids
-        if(smallerAsteroid.Length > 0) {
-			for (int i = 0; i < 2; i++) {
-				Instantiate (smallerAsteroid[Mathf.FloorToInt(Random.Range(0, smallerAsteroid.Length))], transform.position, transform.rotation);
-				gc.hazardCount++;
+        if(smallerAsteroid.Length > 0)
+        {
+			for (int i = 0; i < 2; i++)
+            {
+				Instantiate(smallerAsteroid[Mathf.FloorToInt(Random.Range(0, smallerAsteroid.Length))], transform.position, transform.rotation);
+				gameController.hazardCount++;
 			}
 		}
 	}

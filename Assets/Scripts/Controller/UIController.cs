@@ -7,17 +7,17 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class UIController : MonoBehaviour
 {
-
 	GameController gameController;
 	SoundController soundController;
 	HighScoreController highScoreController;
 
-	public Texture2D[] cursors;
+    GameObject player;
+    GameObject erasePanel, gameOverPanel, newScorePanel, optionsPanel, pausePanel, quitPanel, startPanel;
+
+    public Texture2D[] cursors;
 	public CursorMode cMode = CursorMode.Auto;
 	public Vector2 hotspot = Vector2.zero;
 
-	GameObject player;
-	GameObject erasePanel, gameOverPanel, newScorePanel, optionsPanel, pausePanel, quitPanel, startPanel;
 	public bool newScorePanelActive;
 
 	public bool countdownFinished = false;
@@ -35,7 +35,6 @@ public class UIController : MonoBehaviour
 		if (SceneManager.GetActiveScene().buildIndex == 2)
         {
 			highScoreController = GameObject.FindWithTag ("ScoreController").GetComponent<HighScoreController>();
-			highScoreController.checkForNewHighScore();
 		}
 	}
 
@@ -48,11 +47,11 @@ public class UIController : MonoBehaviour
 				gameOverPanel.SetActive(true);
                 if (newScorePanel.activeInHierarchy && Input.GetKeyDown(KeyCode.Return)) { EnterScore(); }
 			}
-			if (!gameController.gameOver && optionsPanel.activeInHierarchy && Input.GetKeyDown (KeyCode.Escape)) { hideOptions(); }
+			if (!gameController.gameOver && optionsPanel.activeInHierarchy && Input.GetKeyDown (KeyCode.Escape)) { HideOptions(); }
             else if (!gameController.gameOver && Input.GetKeyDown (KeyCode.Escape))
             {
-				if (!gameController.isPaused) { pauseGame(); }
-                else { resumeGame(); }
+				if (!gameController.isPaused) { PauseGame(); }
+                else { ResumeGame(); }
 			}
 		}	
 	}
@@ -112,7 +111,7 @@ public class UIController : MonoBehaviour
 
 	void OnMouseExit() { Cursor.SetCursor(null, Vector2.zero, cMode); }
 
-	public void pauseGame()
+	public void PauseGame()
     {
 		Time.timeScale = 0;
 		player.SetActive(false);
@@ -121,7 +120,7 @@ public class UIController : MonoBehaviour
 	}
 
 	//Button methods
-	public void resumeGame()
+	public void ResumeGame()
     {
 		gameController.isPaused = false;
 		pausePanel.SetActive(false);
@@ -129,13 +128,13 @@ public class UIController : MonoBehaviour
 		Time.timeScale = 1;
 	}
 
-	public void showNewScorePanel()
+	public void ShowNewScorePanel()
     {
 		newScorePanel.SetActive(true);
 		newScorePanelActive = true;
 	}
 
-	public void hideNewScorePanel()
+	public void HideNewScorePanel()
     {
 		newScorePanel.SetActive(false);
 		newScorePanelActive = false;
@@ -143,9 +142,9 @@ public class UIController : MonoBehaviour
 
 	public GameObject GetNewScorePanel() { return newScorePanel; }
 
-	public void showOptions() { optionsPanel.SetActive(true); }
+	public void ShowOptions() { optionsPanel.SetActive(true); }
 
-	public void hideOptions() { optionsPanel.SetActive(false); }
+	public void HideOptions() { optionsPanel.SetActive(false); }
 
 	public void LoadMenu() { SceneManager.LoadScene(0); }
 		
@@ -153,17 +152,17 @@ public class UIController : MonoBehaviour
 
 	public void LoadLeaderboard() { SceneManager.LoadScene(2); }
 
-	public void quitToDesktop()
+	public void QuitToDesktop()
     {
 		quitPanel.SetActive(true);
         if (SceneManager.GetActiveScene().buildIndex == 0) { startPanel.SetActive(false); }
 	}
 
-	public void QuitYes() { Application.Quit (); }
+	public void QuitYes() { Application.Quit(); }
 
 	public void QuitNo()
     {
-		quitPanel.SetActive (false);
+		quitPanel.SetActive(false);
         if (SceneManager.GetActiveScene().buildIndex == 0) { startPanel.SetActive(true); }
 	}
 
@@ -171,7 +170,7 @@ public class UIController : MonoBehaviour
     {
 		string newName = newScorePanel.GetComponentInChildren<InputField>().text;
         if (newName.Length == 0) { newName = "<ohne Namen>"; }
-		int newScore = gameController.getScore();
+		int newScore = gameController.GetScore();
 		PlayerPrefs.SetString("newName", newName);
 		PlayerPrefs.SetInt("newScore", newScore);
 		newScorePanel.SetActive(false);

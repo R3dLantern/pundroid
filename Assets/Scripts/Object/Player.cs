@@ -4,21 +4,22 @@ using System.Collections;
 /// <summary>
 /// Handles player movement and controls
 /// </summary>
-public class PlayerController : MonoBehaviour
+public class Player : MonoBehaviour
 {
-	public float speed;
+    SoundController soundController;
+    HealthbarController healthbarController;
+
+    Camera cam;
+    Transform turret;
+    Transform shield;
+
+    public float speed;
 
 	public float fireRate;
 	public GameObject shot;
 	public Transform shotSpawn;
 	public Transform[] CrossShots;
 	private float nextFire;
-
-	Camera cam;
-	SoundController soundController;
-	HealthbarController healthbarController;
-	Transform turret;
-	Transform shield;
 
 	public float leftConstraint = 0.0f;
 	public float rightConstraint = 0.0f;
@@ -32,6 +33,8 @@ public class PlayerController : MonoBehaviour
 	public int autoAttackTicks = 30;
 	public int crossShotTicks = 15;
 	public int shieldTicks = 10;
+
+    bool hasHitCooldown = false;
 
 	bool enteredViewport = false;
 
@@ -71,7 +74,7 @@ public class PlayerController : MonoBehaviour
 		/// <description>>
 		/// Fires a projectile in the direction of the mouse.
 		/// </description>
-		if (Input.GetButton("Fire1") && Time.time > nextFire) { PlayerFire (); }
+		if (Input.GetButton("Fire1") && Time.time > nextFire) { PlayerFire(); }
 
 		float moveH = Input.GetAxis("Horizontal");
 		float moveV = Input.GetAxis("Vertical");
@@ -107,7 +110,7 @@ public class PlayerController : MonoBehaviour
         // if the CrossShot PowerUp is picked up, the ship fires 4 projectiles in all directions
 		if (crossShotPickedUp)
         {
-			for (int i = 0; i < CrossShots.Length; i++) { Instantiate (shot, CrossShots [i].position, CrossShots [i].rotation); }
+			for (int i = 0; i < CrossShots.Length; i++) { Instantiate (shot, CrossShots[i].position, CrossShots[i].rotation); }
 			crossShotTicks--;
 			if (crossShotTicks == 0)
             {
@@ -156,17 +159,35 @@ public class PlayerController : MonoBehaviour
     public void ActivateAutoAttack() { StartCoroutine ("AutoAttack"); }
 
     /// <summary>
-    /// Heal 1 HP of the player with a Heal PowerUp
-    /// </summary>
-	public void Heal() { healthbarController.IncreaseHealth (); }
-
-    /// <summary>
     /// Activate the CrossShot PowerUp
     /// </summary>
-	public void CrossShot() { crossShotPickedUp = true; }
+	public void ActivateCrossShot() { crossShotPickedUp = true; }
 
     /// <summary>
     /// Activate the shield PowerUp
     /// </summary>
 	public void ActivateShield() { StartCoroutine ("Shield"); }
+
+    /// <summary>
+    /// Get the player's current health
+    /// </summary>
+    /// <returns>Integer representing health points</returns>
+    public int GetCurrentHealth() { return healthbarController.GetPlayerHealth(); }
+
+    /// <summary>
+    /// Restore 1 HP
+    /// </summary>
+	public void Heal() { healthbarController.IncreaseHealth(); }
+
+    /// <summary>
+    /// Take 1 HP of damage
+    /// </summary>
+    public void TakeDamage() { healthbarController.DecreaseHealth(); }
+
+    /// <summary>
+    /// Checks whether the Player has recently taken damage and is invincible while
+    /// on cooldown
+    /// </summary>
+    /// <returns>the current state regarding hit cooldown</returns>
+    public bool IsOnHitCooldown() { return hasHitCooldown; }
 }
