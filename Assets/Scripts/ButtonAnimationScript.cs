@@ -1,11 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-
 [RequireComponent(typeof(Button))]
 
-public class ButtonAnimationScript: MonoBehaviour{
-
+public class ButtonAnimationScript: MonoBehaviour
+{
     float shrinkFactor = 0.95f;
     Vector2 originalSize;
     RectTransform rectTransform;
@@ -16,13 +14,7 @@ public class ButtonAnimationScript: MonoBehaviour{
         originalSize = rectTransform.sizeDelta;
     }
 
-	public void Shrink()
-    {
-        rectTransform.sizeDelta = originalSize * shrinkFactor;
-    }
+	public void Shrink() { rectTransform.sizeDelta = originalSize * shrinkFactor; }
 
-    public void Grow()
-    {
-        rectTransform.sizeDelta = originalSize;
-    }
+    public void Grow() { rectTransform.sizeDelta = originalSize; }
 }

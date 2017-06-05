@@ -14,7 +14,7 @@ public class Asteroid: Spawnable {
 	public PowerUp[] powerUps;
 
     GameController gc;
-	HealthBarManager hb;
+	HealthbarController hb;
 
 	// Use this for initialization
 	public override void IndividualStartConfiguration () {
@@ -22,9 +22,9 @@ public class Asteroid: Spawnable {
 		if (gc == null) {
 			Debug.Log ("GameController nicht gefunden!");	
 		}
-		hb = GameObject.FindWithTag ("HealthBar").GetComponent<HealthBarManager> ();
+		hb = GameObject.FindWithTag ("HealthBar").GetComponent<HealthbarController> ();
 		if (hb == null) {
-			Debug.Log ("HealthBarManager nicht gefunden!");	
+			Debug.Log ("HealthbarController nicht gefunden!");	
 		}
 	}
 
@@ -65,24 +65,24 @@ public class Asteroid: Spawnable {
 			Destroy (exp_clone, 0.5f);
 		}
 		Destroy (gameObject);
-		op.Explosion ();
-		gc.hazardCount--;
+		soundController.Explosion ();
+		--gc.hazardCount;
 
         // if no PowerUp is active, up the counter for the next spawn
-		if (!pc.autoAttackActive && !pc.crossShotPickedUp) {
+		if (!playerController.autoAttackActive && !playerController.crossShotPickedUp) {
 			gc.pUpCount++;
 		}
 
         // spawn a random PowerUp object after 15 destroyed asteroids
 		if (gc.pUpCount == 15) {
-			Instantiate (powerUps [Random.Range (0, powerUps.Length - 1)], transform.position, transform.rotation);
+			Instantiate (powerUps [Mathf.FloorToInt(Random.Range (0, powerUps.Length - 1))], transform.position, transform.rotation);
 			gc.pUpCount = 0;
 		}
 
         // Bigger asteroids spawn smaller asteroids
         if(smallerAsteroid.Length > 0) {
 			for (int i = 0; i < 2; i++) {
-				Instantiate (smallerAsteroid[Random.Range(0, smallerAsteroid.Length-1)], transform.position, transform.rotation);
+				Instantiate (smallerAsteroid[Mathf.FloorToInt(Random.Range(0, smallerAsteroid.Length))], transform.position, transform.rotation);
 				gc.hazardCount++;
 			}
 		}

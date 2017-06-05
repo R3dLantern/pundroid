@@ -5,9 +5,9 @@ using System;
 /// <summary>
 /// [WIP] Controller class for enemy ships
 /// </summary>
-public class EnemyShipController : Spawnable {
+public class EnemyShip : Spawnable
+{
     // TODO: implement evasion logic and pathfinding AI
-
     public int scoreValue;
 
     public GameObject explosion;
@@ -23,22 +23,18 @@ public class EnemyShipController : Spawnable {
 	Camera cam;
 	Transform turret;
     GameController gc;
-    HealthBarManager hb;
+    HealthbarController hb;
 
 	float distanceZ;
 
-	void Awake(){
-		turret = GameObject.Find ("Controller").GetComponent<Transform> ();
-	}
+	void Awake() { turret = GameObject.Find("Controller").GetComponent<Transform>(); }
 
     public override void IndividualStartConfiguration()
     {
         gc = GameObject.FindWithTag("GameController").GetComponent<GameController>();
-        if (gc == null)
-            Debug.LogError("GameController not found");
-        hb = GameObject.FindWithTag("HealthBar").GetComponent<HealthBarManager>();
-        if (hb == null)
-            Debug.LogError("HealthBarManager not found");
+        if (gc == null) { Debug.LogError("GameController not found"); }
+        hb = GameObject.FindWithTag("HealthBar").GetComponent<HealthbarController>();
+        if (hb == null) { Debug.LogError("HealthbarController not found"); }
     }
 
     public override void OnTriggerEnter2D(Collider2D other)
@@ -58,10 +54,7 @@ public class EnemyShipController : Spawnable {
         return;
     }
 
-    void Fire()
-	{
-		nextFire = Time.time + fireRate;
-	}
+    void Fire() { nextFire = Time.time + fireRate; }
 
     void HandleDestruction(Collider2D other, int scoreValue = 0)
     {
@@ -72,44 +65,30 @@ public class EnemyShipController : Spawnable {
                 if (hb.GetPlayerHealth() == 0)
                 {
                     DestroyImmediate(other.gameObject);
-                    GameObject exp_clone = (GameObject)Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
+                    GameObject exp_clone = Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
                     Destroy(exp_clone, 0.5f);
                     gc.PlayerHit();
                     gc.GameOver();
                 }
-                else
-                {
-                    gc.PlayerHit();
-                }
+                else { gc.PlayerHit(); }
             }
-            else
-            {
-                return;
-            }
+            else { return; }
         }
         else
         {
             DestroyImmediate(other.gameObject);
             gc.AddScore(scoreValue);
         }
-        if(explosion != null)
-        {
-            GameObject exp_clone2 = (GameObject)Instantiate(explosion, transform.position, transform.rotation);
-        }
-        DestroyImmediate(this.gameObject);
-        op.Explosion();
+        if(explosion != null) { GameObject exp_clone2 = Instantiate(explosion, transform.position, transform.rotation); }
+        DestroyImmediate(gameObject);
+        soundController.Explosion();
         gc.hazardCount--;
 
-        if(!pc.autoAttackActive && !pc.crossShotPickedUp)
-        {
-            gc.pUpCount++;
-        }
+        if(!playerController.autoAttackActive && !playerController.crossShotPickedUp) { gc.pUpCount++; }
         if(gc.pUpCount == 15)
         {
             Instantiate(powerUps[UnityEngine.Random.Range(0, powerUps.Length - 1)], transform.position, transform.rotation);
             gc.pUpCount = 0;
         }
     }
-
-
 }

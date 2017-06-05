@@ -5,8 +5,8 @@ using UnityEngine;
 /// <summary>
 /// Abstract class for all Spawnable ingame objects.
 /// </summary>
-public abstract class Spawnable : MonoBehaviour {
-
+public abstract class Spawnable : MonoBehaviour
+{
     public float minTorque = -500f;
     public float maxTorque = 50f;
     public float minForce = 100f;
@@ -25,8 +25,8 @@ public abstract class Spawnable : MonoBehaviour {
     Camera cam;
     Rigidbody2D rb;
 
-    protected PlayerController pc;
-    protected OptionsController op;
+    protected PlayerController playerController;
+    protected SoundController soundController;
 
     /// <summary>
     /// Basic Start method for all Spawnables, can be extended with
@@ -38,16 +38,10 @@ public abstract class Spawnable : MonoBehaviour {
         distanceZ = Mathf.Abs(cam.transform.position.z + transform.position.z);
         rb = GetComponent<Rigidbody2D>();
 
-        op = GameObject.FindWithTag("OptionsController").GetComponent<OptionsController>();
-        if (op == null)
-        {
-            Debug.Log("OptionsController nicht gefunden!");
-        }
-        pc = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-        if (pc == null)
-        {
-            Debug.Log("PlayerController nicht gefunden!");
-        }
+        soundController = GameObject.FindWithTag("SoundController").GetComponent<SoundController>();
+        if (soundController == null) { Debug.Log("SoundController nicht gefunden!"); }
+        playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+        if (playerController == null) { Debug.Log("PlayerController nicht gefunden!"); }
 
         IndividualStartConfiguration();
 
@@ -75,22 +69,10 @@ public abstract class Spawnable : MonoBehaviour {
     /// </summary>
     public virtual void FixedUpdate()
     {
-        if (transform.position.x < leftConstraint - buffer)
-        {
-            transform.position = new Vector3(rightConstraint + buffer, transform.position.y, transform.position.z);
-        }
-        if (transform.position.x > rightConstraint + buffer)
-        {
-            transform.position = new Vector3(leftConstraint - buffer, transform.position.y, transform.position.z);
-        }
-        if (transform.position.y < bottomConstraint - buffer)
-        {
-            transform.position = new Vector3(transform.position.x, topConstraint + buffer, transform.position.z);
-        }
-        if (transform.position.y > topConstraint + buffer)
-        {
-            transform.position = new Vector3(transform.position.x, bottomConstraint - buffer, transform.position.z);
-        }
+        if (transform.position.x < leftConstraint - buffer) { transform.position = new Vector3(rightConstraint + buffer, transform.position.y, transform.position.z); }
+        if (transform.position.x > rightConstraint + buffer) { transform.position = new Vector3(leftConstraint - buffer, transform.position.y, transform.position.z); }
+        if (transform.position.y < bottomConstraint - buffer) { transform.position = new Vector3(transform.position.x, topConstraint + buffer, transform.position.z); }
+        if (transform.position.y > topConstraint + buffer) { transform.position = new Vector3(transform.position.x, bottomConstraint - buffer, transform.position.z); }
     }
 
     /// <summary>

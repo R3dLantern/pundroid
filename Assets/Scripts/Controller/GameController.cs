@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using System.Collections;
 
 /// <summary>
 /// The GameController handles all backend mechanisms happening in the game scene.
 /// </summary>
-public class GameController : MonoBehaviour {
-
+public class GameController : MonoBehaviour
+{
 	//Hazard variables
 	public GameObject[] hazards;
 	public int hazardCount; 
@@ -18,7 +16,7 @@ public class GameController : MonoBehaviour {
 	public float boundaryY = 5.5f;
 	
 	Text scoreText;
-	HealthBarManager hb;
+	HealthbarController healthBarController;
 
 	UIController ui;
 
@@ -45,7 +43,7 @@ public class GameController : MonoBehaviour {
 		else if (instance != this)
 			Destroy (gameObject);
 		scoreText = GameObject.Find ("ScoreText").GetComponent<Text> ();
-		hb = GameObject.FindWithTag ("HealthBar").GetComponent<HealthBarManager> ();
+		healthBarController = GameObject.FindWithTag ("HealthBar").GetComponent<HealthbarController> ();
 		ui = GameObject.Find ("Canvas").GetComponent<UIController> ();
 	}
 	/// <summary>
@@ -77,7 +75,7 @@ public class GameController : MonoBehaviour {
 
 		if (hazardCount < 6) {
 			for (int j = hazardCount; j < hazardMax; j++) {
-				GameObject hazard = hazards [Random.Range (0, hazards.Length)];
+				GameObject hazard = hazards[Random.Range (0, hazards.Length)];
 				SafeInstantiate (hazard);
 			}
 			hazardCount = hazardMax;
@@ -124,7 +122,7 @@ public class GameController : MonoBehaviour {
 	/// PLANNED: Interaction with the Health bar; Player animation  (CRITICAL CONDITION)
 	/// </summary>
 	public void PlayerHit(){
-		hb.DecreaseHealth();
+		healthBarController.DecreaseHealth();
 	}
 
 	/// <summary>
