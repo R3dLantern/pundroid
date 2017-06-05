@@ -80,25 +80,6 @@ public class SoundController : MonoBehaviour
         SceneManager.activeSceneChanged += OnSceneChange;
 	}
 
-	void OnSceneChange(Scene last, Scene now)
-    {
-        checkMusic();
-		if (SceneManager.GetActiveScene().buildIndex < 2)
-        {
-			muteToggle = GameObject.FindWithTag("volume_mute").GetComponent<Toggle>();
-			mSlider = GameObject.FindWithTag("volume_master").GetComponent<Slider>();
-			sfxSlider = GameObject.FindWithTag("volume_sfx").GetComponent<Slider>();
-			menuSlider = GameObject.FindWithTag("volume_menu").GetComponent<Slider>();
-			gameSlider = GameObject.FindWithTag("volume_game").GetComponent<Slider>();
-
-			muteToggle.isOn = PlayerPrefs.GetInt("mute") == 1 ? true : false;
-			mSlider.value = PlayerPrefs.GetInt("master");
-			sfxSlider.value = PlayerPrefs.GetInt("sfx");
-			menuSlider.value = PlayerPrefs.GetInt("menu");
-			gameSlider.value = PlayerPrefs.GetInt("game");
-		}
-	}
-
 	// Update is called once per frame
 	void Update()
     {
@@ -185,6 +166,25 @@ public class SoundController : MonoBehaviour
                 break;
 		}
 	}
+
+    void OnSceneChange(Scene last, Scene now)
+    {
+        checkMusic();
+        if (SceneManager.GetActiveScene().buildIndex < 2)
+        {
+            muteToggle = GameObject.FindWithTag("volume_mute").GetComponent<Toggle>();
+            mSlider = GameObject.FindWithTag("volume_master").GetComponent<Slider>();
+            sfxSlider = GameObject.FindWithTag("volume_sfx").GetComponent<Slider>();
+            menuSlider = GameObject.FindWithTag("volume_menu").GetComponent<Slider>();
+            gameSlider = GameObject.FindWithTag("volume_game").GetComponent<Slider>();
+
+            muteToggle.isOn = PlayerPrefs.GetInt("mute") == 1 ? true : false;
+            mSlider.value = PlayerPrefs.GetInt("master");
+            sfxSlider.value = PlayerPrefs.GetInt("sfx");
+            menuSlider.value = PlayerPrefs.GetInt("menu");
+            gameSlider.value = PlayerPrefs.GetInt("game");
+        }
+    }
 
     /*
     public IEnumerator PlayMusicAfterCountdown()

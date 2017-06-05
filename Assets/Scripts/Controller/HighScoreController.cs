@@ -13,8 +13,6 @@ public class HighScoreController : MonoBehaviour
 
     int rankingPosition;
 
-	GameController gameController;
-
 	string nameKey = "name";
 	string scoreKey = "score";
 
