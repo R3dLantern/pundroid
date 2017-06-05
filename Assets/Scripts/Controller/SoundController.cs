@@ -13,7 +13,6 @@ public class SoundController : MonoBehaviour
 	int sfxVolume;
 	int menuVolume;
 	int gameVolume;
-	int scene;
 
 	bool isMute;
 	AudioSource[] sounds;
